@@ -1,5 +1,7 @@
 # Music Tube Server
 
+Music tube is a music video display application which periodically updated the videos from the YouTube Data API.
+
 # Stack used
 
 - Backend with [Express framework](https://expressjs.com/) for [Node.js](https://nodejs.org/en/)
