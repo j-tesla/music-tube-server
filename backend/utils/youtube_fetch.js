@@ -11,10 +11,6 @@ const youtube = google.youtube({
   auth: YOUTUBE_API_KEY,
 });
 
-const reqParams = {
-  part: 'snippet', order: 'date', type: 'video', topicId: MUSIC_TOPIDID, videoEmbeddable: true,
-};
-
 const processItems = (items) => {
   items.forEach(async (item) => {
     try {
@@ -33,8 +29,33 @@ const processItems = (items) => {
   });
 };
 
+
+const remove_unavailable_videos = async () => {
+  const videos = await Video.find({});
+  const videos_json = await videos.map(v => v.toJSON());
+  await Promise.all(videos_json.map(async ({id}) => {
+    const vid_params = {part: 'status', id};
+    const {data} = await youtube.videos.list(vid_params);
+    let video_exists = true;
+    if (data.items.length === 0)  video_exists = false;
+    else {
+      const {status} = data.items[0];
+      if (!(status.privacyStatus === 'public' && status.embeddable)) video_exists = false;
+    }
+    if (!video_exists) {
+      await Video.findByIdAndDelete(id);
+    }
+  }));
+}
+
+
 const update_db = async () => {
+  const reqParams = {
+    part: 'snippet', order: 'date', type: 'video', topicId: MUSIC_TOPIDID, videoEmbeddable: true,
+  };
+
   try {
+    await remove_unavailable_videos();
 
     let {data} = await youtube.search.list(reqParams);
 
@@ -62,7 +83,7 @@ const scheduler = new ToadScheduler()
 const schedule_update_db = () => {
 
   const task = new AsyncTask('update-db', update_db);
-  const job = new SimpleIntervalJob({ hours: 12, runImmediately: true }, task)
+  const job = new SimpleIntervalJob({hours: 12, runImmediately: true}, task)
   scheduler.addSimpleIntervalJob(job);
 }
 
