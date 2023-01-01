@@ -12,6 +12,6 @@
     "googleapis": "^95.0.0",
     "mongoose": "^6.8.0",
     "morgan": "~1.10.0",
-    "toad-scheduler": "^2.1.0"
+    "toad-scheduler": "^2.1.1"
   }
 }
