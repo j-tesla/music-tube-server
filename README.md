@@ -42,5 +42,5 @@ Refer Docker documentation for different uses of an image
 
 __________
 
-**Demo deployment:**: https://music--tube.herokuapp.com/  
+<!-- **Demo deployment:**: https://music--tube.herokuapp.com/ -->  
 Dashboard is avaialble at root url and API endpoint for videos is at `/api/videos`
